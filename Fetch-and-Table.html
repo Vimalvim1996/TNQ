@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title> Data Filter</title>
+
+</head>
+<body>
+    <h1> Data Filter</h1>
+    <form id="filterForm">
+        <label for="status">Select Status:</label>
+        <select id="status" name="status">
+            <option value="Active">Active</option>
+            <option value="Retired">Retired</option>
+            <option value="Unknown">Unknown</option>
+            <option value="Destroyed">Destroyed</option>
+        </select>
+        <button id="loadButton" type="button">Load</button>
+    </form>
+    <table id="resultTable">
+        <thead>
+            <tr>
+                <th>Capsule ID</th>
+                <th>No of missions</th>
+                <th>Details</th>
+            </tr>
+        </thead>
+        <tbody id="tableBody">
+        </tbody>
+    </table>
+    <script>
+		document.addEventListener("DOMContentLoaded", () => {
+    const filterForm = document.getElementById("filterForm");
+    const statusSelect = document.getElementById("status");
+    const loadButton = document.getElementById("loadButton");
+    const resultTable = document.getElementById("resultTable");
+    const tableBody = document.getElementById("tableBody");
+
+    let data; // To store the JSON data
+
+    // Load the JSON data using Fetch
+    fetch('fetch-and-table.json')
+        .then(response => response.json())
+        .then(jsonData => {
+            data = jsonData;
+        })
+        .catch(error => {
+            console.error("Error loading JSON:", error);
+        });
+
+    // Function to filter and display data
+    loadButton.addEventListener("click", () => {
+        const selectedStatus = statusSelect.value;
+        if (!data) {
+            alert("JSON data not loaded yet. Please try again later.");
+            return;
+        }
+
+        // Clear the table body
+        tableBody.innerHTML = "";
+
+        // Filter and display data
+        data.forEach(capsule => {
+            if (capsule.status === selectedStatus) {
+                const row = document.createElement("tr");
+                const capsuleIdCell = document.createElement("td");
+                const missionsCell = document.createElement("td");
+                const detailsCell = document.createElement("td");
+
+                capsuleIdCell.textContent = capsule.capsule_id;
+                missionsCell.textContent = capsule.missions.length;
+                detailsCell.textContent = capsule.details;
+
+                row.appendChild(capsuleIdCell);
+                row.appendChild(missionsCell);
+                row.appendChild(detailsCell);
+
+                tableBody.appendChild(row);
+            }
+        });
+    });
+});
+
+	</script>
+</body>
+</html>
