@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>JSON to HTML Converter</title>
+</head>
+<body>
+    <h1>JSON to HTML Converter</h1>
+    <label for="jsonInput">Enter JSON:</label><br>
+    <textarea id="jsonInput" rows="10" cols="50"></textarea><br>
+
+    <button id="generateButton">Generate</button><br>
+
+    <label for="htmlOutput">HTML Output:</label><br>
+    <textarea id="htmlOutput" rows="10" cols="50" readonly></textarea>
+
+    <script>
+        document.getElementById("generateButton").addEventListener("click", function() {
+            const jsonInput = document.getElementById("jsonInput").value;
+            const htmlOutput = document.getElementById("htmlOutput");
+
+            try {
+                const jsonData = JSON.parse(jsonInput);
+                if (checkForDuplicateIds(jsonData)) {
+                    const html = generateHTML(jsonData);
+                    htmlOutput.value = html;
+                } else {
+                    alert("Error: ID duplicated");
+                }
+            } catch (error) {
+                htmlOutput.value = "Invalid JSON: " + error.message;
+            }
+        });
+
+        function checkForDuplicateIds(data) {
+            const idSet = new Set();
+            for (const item of data) {
+                if (idSet.has(item.id)) {
+                    return false;
+                }
+                idSet.add(item.id);
+            }
+            return true;
+        }
+
+        function generateHTML(data) {
+    let html = '';
+    for (const item of data) {
+        html += `<div class="root" data-id="${item.id}">\n`;
+        html += `    <span class="username"> ${item.username}</span>\n`;
+        html += `    <span class="video_name">${item.video_name}</span>\n`;
+        html += `    <span class="additional_details">\n`;
+        html += `        <span class="type">${item.action}</span>\n`;
+        html += `    </span>\n`;
+        html += `</div>\n`;
+    }
+    return html;
+}
+
+    </script>
+</body>
+</html>
